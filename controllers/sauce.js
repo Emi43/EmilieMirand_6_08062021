@@ -1,4 +1,4 @@
-const Sauce = require('../models/sauce');//pour importer le modèle de sauce//
+const Sauce = require('../models/Sauce');//pour importer le modèle de sauce//
 const fs = require('fs');//importer le package fs de node//
 
 exports.createSauce = (req, res, next) => {
