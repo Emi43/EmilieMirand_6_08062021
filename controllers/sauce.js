@@ -36,7 +36,7 @@ exports.modifySauce = (req, res, next) => {//condition ternaire//
         ...JSON.parse(req.body.sauce),
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`//on modifie l'URL de l'image de manière dynamique//
       } : { ...req.body };//si req.file n'existe pas on fait une copie de req.body//
-    sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })//on passe en premier argument l'objet qu'on souhaite modifier et en deuxième argument la nouvelle version de l'objet
+    Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })//on passe en premier argument l'objet qu'on souhaite modifier et en deuxième argument la nouvelle version de l'objet
       .then(() => res.status(200).json({ message: 'Sauce modifiée !'}))
       .catch(error => res.status(400).json({ error }));
 };
