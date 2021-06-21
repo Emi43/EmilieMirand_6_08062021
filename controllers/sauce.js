@@ -6,7 +6,11 @@ exports.createSauce = (req, res, next) => {
     delete sauceObject._id;//pour supprimer l'id envoyé par le frontend//
     const sauce = new Sauce({
       ...sauceObject,
-      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+      likes : 0,
+      dislikes : 0,
+      usersLiked : [],
+      usersDisliked : []
     });
     console.log(sauce)
     sauce.save()//enregister la nouvelle sauce dans la base de donnée//
@@ -59,3 +63,15 @@ exports.getAllSauce = (req, res, next) => {
   .then(sauces => res.status(200).json(sauces))
   .catch(error => res.status(400).json({error }));
 };
+exports.likeSauce = (req, res, next) => {
+   switch(req.body.like) {
+    //dans le cas où req.body.like = 0 (l'utilisateur annule ce qu'il aime ou n'aime pas)//
+    case 0:
+        break;
+    //dans le cas ou req.body.like = 1 (l'utilisateur aime la sauce)// 
+    case 1 :
+    //dans le cas ou req.body.like = -1 (l'utilisateur n'aime pas la sauce)// 
+    break;  
+    case -1:  
+   }
+}

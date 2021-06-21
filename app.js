@@ -2,11 +2,20 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
+const helmet = require("helmet");//pour importer helmet//
+const rateLimit = require("express-rate-limit");
 
 const sauceRoutes = require('./routes/sauce');
 const userRoutes = require('./routes/user');
 
-mongoose.connect('mongodb+srv://emilie:LucasThibault@cluster0.f0qrc.mongodb.net/PROJET?retryWrites=true&w=majority',
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
+  });
+
+require('dotenv').config();
+
+mongoose.connect(`mongodb+srv://${process.env.USER_DB}:${process.env.PASSWORD_DB}@cluster0.f0qrc.mongodb.net/${process.env.DATA_BASE_NAME}?retryWrites=true&w=majority`,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
@@ -22,6 +31,8 @@ app.use((req, res, next) => {
   });
 
 app.use(bodyParser.json());
+app.use(helmet());//pour sécuriser les en-têtes http//
+app.use(limiter);
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
