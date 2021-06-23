@@ -64,14 +64,30 @@ exports.getAllSauce = (req, res, next) => {
   .catch(error => res.status(400).json({error }));
 };
 exports.likeSauce = (req, res, next) => {
-   switch(req.body.like) {
-    //dans le cas où req.body.like = 0 (l'utilisateur annule ce qu'il aime ou n'aime pas)//
-    case 0:
-        break;
-    //dans le cas ou req.body.like = 1 (l'utilisateur aime la sauce)// 
-    case 1 :
-    //dans le cas ou req.body.like = -1 (l'utilisateur n'aime pas la sauce)// 
-    break;  
-    case -1:  
-   }
+    Sauce.findOne({_id:req.params.id})//On utilise la méthode findOne() pour trouver la Sauce unique ayant le même id que le paramètre de la requête//  
+      .then(sauce => {
+        switch(req.body.like) {
+          case 1: //si un utilisateur like la sauce//
+            sauce.likes +=1;
+            sauce.usersLiked.push(req.body.userId);
+            break;
+          case -1: //si un utilisateur dislike la sauce//
+            sauce.dislikes +=1;
+            sauce.usersDisliked.push(req.body.userId);
+            break;
+          case 0:
+            //si un utilisateur enleve son like//
+            if(sauce.usersLiked.some(userId => userId == req.body.userId)){
+              sauce.likes -=1;
+              sauce.usersLiked = sauce.usersLiked.filter(userId => userId != req.body.userId);
+            }else {
+              sauce.dislikes -=1;
+              sauce.usersDisliked = sauce.usersDisliked.filter(userId => userId != req.body.userId);                       
+            }
+            break;
+        }
+        sauce.save()//enregistrement//
+      .then(() => res.status(201).json())
+      .catch(error => res.status(400).json({ error }));
+      })
 }
