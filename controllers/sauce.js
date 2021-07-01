@@ -1,11 +1,12 @@
-const Sauce = require('../models/Sauce');//pour importer le modèle de sauce//
-const fs = require('fs');//importer le package fs de node//
+const Sauce = require('../models/Sauce');//pour importer le modèle de sauce(sauceSchema) pour pouvoir l'appliquer //
+const fs = require('fs');//importer le package fs(file system) de node pour accéder aux opérations liées aux fichiers//
 
+//j'exporte chacune de mes fonctions//
 exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce);
-    delete sauceObject._id;//pour supprimer l'id envoyé par le frontend//
+    delete sauceObject._id;//pour supprimer l'id envoyé par le frontend ,mongoDB génére automatiquement un id//
     const sauce = new Sauce({
-      ...sauceObject,
+      ...sauceObject,//l'opérateur spread pour copier dans le corps de la requête req.body.sauce//
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
       likes : 0,
       dislikes : 0,
@@ -13,7 +14,7 @@ exports.createSauce = (req, res, next) => {
       usersDisliked : []
     });
     console.log(sauce)
-    sauce.save()//enregister la nouvelle sauce dans la base de donnée//
+    sauce.save()//enregister la nouvelle sauce dans la base de donnée et retourne une promesse//
       .then(() => res.status(201).json({ message: 'Sauce enregistrée !'}))
       .catch(error => res.status(400).json({ error }));
   };
